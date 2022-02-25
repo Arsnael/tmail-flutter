@@ -24,9 +24,9 @@ pipeline {
           echo "Docker tag: ${env.DOCKER_TAG}"
 
           // Build image
-          sh "docker build -t linagora/tmail-web:${env.DOCKER_TAG} ."
+          sh "docker build -t rcordier/tmail-web:${env.DOCKER_TAG} ."
 
-          def webImage = docker.image "linagora/tmail-web:${env.DOCKER_TAG}"
+          def webImage = docker.image "rcordier/tmail-web:${env.DOCKER_TAG}"
           docker.withRegistry('', 'dockerHub') {
             webImage.push()
           }
