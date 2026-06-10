@@ -25,6 +25,7 @@ pipeline {
         stage('Run Patrol Mobile Integration Tests') {
             steps {
                 withCredentials([file(credentialsId: 'firebase-test-lab-sa', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                    sh 'echo "starting integration tests on firebase"'
                     sh './scripts/patrol-integration-test-with-docker.sh'
                 }
             }
