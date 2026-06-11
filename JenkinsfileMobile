@@ -10,8 +10,6 @@ pipeline {
 
     environment {
         FLUTTER_VERSION = '3.38.9'
-        API_LEVEL = '30'
-        AVD_NAME = 'pixel_6'
         FIREBASE_PROJECT_ID = 'twake-195010'
     }
 
@@ -24,8 +22,8 @@ pipeline {
 
         stage('Run Patrol Mobile Integration Tests') {
             steps {
+                sh 'echo "starting integration tests on firebase"'
                 withCredentials([file(credentialsId: 'firebase-test-lab-sa', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                    sh 'echo "starting integration tests on firebase"'
                     sh './scripts/patrol-integration-test-with-docker.sh'
                 }
             }
@@ -46,7 +44,7 @@ pipeline {
             deleteDir() /* clean up our workspace */
         }
         failure {
-            echo 'Pipeline failed. Review the console log and emulator.log for details.'
+            echo 'Pipeline failed. Review the console log for details.'
         }
     }
 }
