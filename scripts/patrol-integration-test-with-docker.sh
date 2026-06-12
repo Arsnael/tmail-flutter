@@ -59,7 +59,13 @@ cleanup() {
 trap cleanup EXIT
 
 echo "Running Patrol tests..."
+echo "google cli auth"
+gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
+gcloud config set project "$FIREBASE_PROJECT_ID"
+
+echo "Flutter build apk"
 flutter build apk --config-only --quiet
+echo "Patrol build apk"
 patrol build android -v \
     --tags=android \
     --dart-define=USERNAME="$BOB" \
@@ -69,9 +75,7 @@ patrol build android -v \
     --dart-define=BASIC_AUTH_URL="$BASIC_AUTH_URL" \
     --dart-define=RESET_SERVER_URL="http://10.0.2.2:$RESET_PORT"
 
-gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
-gcloud config set project "$FIREBASE_PROJECT_ID"
-
+echo "start firebase tests"
 gcloud firebase test android run \
     --type instrumentation \
     --app build/app/outputs/apk/debug/app-debug.apk \
