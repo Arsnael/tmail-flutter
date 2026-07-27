@@ -73,6 +73,8 @@ import 'package:tmail_ui_user/features/search/email/presentation/service/search_
 import 'package:tmail_ui_user/features/search/email/presentation/service/search_execution_observer.dart';
 import 'package:tmail_ui_user/features/search/email/presentation/service/search_executor_service.dart';
 import 'package:tmail_ui_user/features/search/email/presentation/providers/search_executor_provider.dart';
+import 'package:tmail_ui_user/features/search/email/presentation/notifier/search_email_presentation_notifier.dart';
+import 'package:tmail_ui_user/features/mailbox_dashboard/presentation/notifier/search_view_state_notifier.dart';
 import 'package:tmail_ui_user/features/thread/presentation/extensions/handle_email_filter_extension.dart';
 import 'package:tmail_ui_user/features/thread/presentation/extensions/handle_keyboard_shortcut_actions_extension.dart';
 import 'package:tmail_ui_user/features/thread/presentation/extensions/list_presentation_email_extensions.dart';
@@ -83,6 +85,7 @@ import 'package:tmail_ui_user/features/thread/presentation/model/delete_action_t
 import 'package:tmail_ui_user/features/thread/presentation/model/loading_more_status.dart';
 import 'package:tmail_ui_user/features/thread/presentation/model/mail_list_shortcut_action_view_event.dart';
 import 'package:tmail_ui_user/features/thread/presentation/model/search_status.dart';
+import 'package:tmail_ui_user/features/thread/presentation/model/search_state.dart';
 import 'package:tmail_ui_user/main/exceptions/remote/method_level_exception.dart';
 import 'package:tmail_ui_user/main/localizations/app_localizations.dart';
 import 'package:tmail_ui_user/main/routes/app_routes.dart';
@@ -113,7 +116,7 @@ class ThreadController extends BaseController with EmailActionController {
   final loadingMoreStatus = Rx(LoadingMoreStatus.idle);
 
   bool canLoadMore = true;
-  bool canSearchMore = true;
+  ProviderSubscription<SearchState>? _searchStateSubscription;
   MailboxId? _currentMemoryMailboxId;
   int _peakEmailCount = 0;
   final ScrollController listEmailController = ScrollController();
@@ -140,7 +143,10 @@ class ThreadController extends BaseController with EmailActionController {
 
   search.SearchController get searchController => mailboxDashBoardController.searchController;
 
-  SearchEmailFilter get _searchEmailFilter => searchController.searchEmailFilter.value;
+  SearchEmailFilter get _searchEmailFilter => searchController.committedSearchFilter;
+
+  bool get canSearchMore =>
+      appProviderContainer.read(searchEmailPresentationProvider).canSearchMore;
 
   bool get _isCollapseThreadsEnabled =>
       appProviderContainer.read(localSettingsProvider).threadConfig.isEnabled;
@@ -195,6 +201,7 @@ class ThreadController extends BaseController with EmailActionController {
     }
     _webSocketQueueHandler?.dispose();
     _localSettingsSubscription?.close();
+    _searchStateSubscription?.close();
     if (PlatformInfo.isWeb) {
       _searchService.unregister(_searchExecutionObserver);
     }
@@ -307,11 +314,14 @@ class ThreadController extends BaseController with EmailActionController {
       }
     });
 
-    ever(searchController.searchState, (searchState) {
+    _searchStateSubscription = appProviderContainer.listen(
+      searchViewStateProvider.select((state) => state.searchState),
+      (_, searchState) {
       if (searchState.searchStatus == SearchStatus.ACTIVE) {
         cancelSelectEmail();
       }
-    });
+      },
+    );
 
     ever(mailboxDashBoardController.dashBoardAction, (action) {
       if (action is SelectionAllEmailAction) {
@@ -364,7 +374,9 @@ class ThreadController extends BaseController with EmailActionController {
         if (listEmailController.hasClients) {
           listEmailController.jumpTo(0);
         }
-        canSearchMore = true;
+        appProviderContainer
+            .read(searchEmailPresentationProvider.notifier)
+            .resetSearchMore();
         mailboxDashBoardController.emailsInCurrentMailbox.clear();
       } else if (action is ReclaimMailListKeyboardShortcutFocusAction) {
         refocusMailShortcutFocus();
@@ -619,7 +631,9 @@ class ThreadController extends BaseController with EmailActionController {
     mailboxDashBoardController.listEmailSelected.clear();
     mailboxDashBoardController.currentSelectMode.value = SelectMode.INACTIVE;
     canLoadMore = true;
-    canSearchMore = true;
+    appProviderContainer
+        .read(searchEmailPresentationProvider.notifier)
+        .resetSearchMore();
     loadingMoreStatus.value = LoadingMoreStatus.idle;
   }
 
