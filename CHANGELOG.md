@@ -1,3 +1,7 @@
+## [0.34.0] - 2026-08-10
+### Fixed
+- #4664 Fix can't set my break line in my answer where I want
+
 ## [0.33.0] - 2026-07-31
 ### Added
 - #4739 Enable mobile drive picker
