@@ -16,3 +16,9 @@ class DriveIntentPageLoadException implements Exception {
 class DriveIntentTimeoutException implements Exception {}
 
 class WorkplaceNoIntentClientException implements Exception {}
+
+class DriveDownloadNullAttachmentException implements Exception {}
+
+class DriveDownloadInsecureLinkException implements Exception {}
+
+class DriveDownloadEmptyResponseException implements Exception {}
