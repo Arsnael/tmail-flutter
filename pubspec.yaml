@@ -325,7 +325,7 @@ dependency_overrides:
   linagora_design_flutter:
     git:
       url: https://github.com/linagora/linagora-design-flutter.git
-      ref: v0.2.0
+      ref: v0.2.7
 
   ### Original dependency is abandoned, so we use fork
   intl_generator:
@@ -404,16 +404,8 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
   fonts:
-    - family: Inter
-      fonts:
-        - asset: assets/fonts/Inter/Inter-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/Inter/Inter-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/Inter/Inter-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Inter/Inter-Regular.ttf
-
+    ### The app font comes from linagora_design_flutter (TwakeInter).
+    ### The families below only back ConstantsUI.webFontFamilyFallback.
     - family: Roboto
       fonts:
         - asset: assets/fonts/fallback/Roboto-Regular.ttf
