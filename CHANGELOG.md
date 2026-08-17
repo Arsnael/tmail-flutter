@@ -1,3 +1,20 @@
+## [0.35.0] - 2026-08-17
+### Fixed
+- Fix auth: force logout when mobile refresh rejected by token endpoint
+- Fix auth: stop double-reporting rejected mobile token refresh to Sentry
+- Fix search result/state leaks: resize, system-back, search URL labelId
+- HOTFIX Flaky search email with tag test
+
+### Changed
+- TF-4644 Apply Riverpod SSOT to advanced search and web search filter
+- TF-4645 Migrate mobile search to the central executor
+- TF-4646 Add search view-state SSOT with Riverpod (web)
+- TF-4647 Wire dashboard filter into search SSOT, remove position
+- TF-4744 Inherit typography from design system TwakeInter
+- TF-4758 Default DriveAttachmentConfig.isEnabled to true
+- TF-4726 Composable validator
+- TF-4727 Web OPFS drive file stager and strategy selection
+
 ## [0.34.0] - 2026-08-10
 ### Fixed
 - #4664 Fix can't set my break line in my answer where I want
