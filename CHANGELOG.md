@@ -1,3 +1,10 @@
+## [0.35.1] - 2026-08-21
+### Fixed
+- (fix) Mobile search result not updated
+
+### Changed
+- TF-4728 Size limit for add as attachment from Drive
+
 ## [0.35.0] - 2026-08-17
 ### Fixed
 - Fix auth: force logout when mobile refresh rejected by token endpoint
