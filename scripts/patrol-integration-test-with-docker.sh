@@ -149,6 +149,7 @@ gcloud firebase test android run \
     --use-orchestrator \
     --environment-variables clearPackageData=true \
     --no-record-video \
+    --results-bucket="gs://$RESULTS_BUCKET" \
     --results-dir="$RESULTS_DIR" \
     2>&1 | tee "$FTL_OUTPUT"
 TEST_EXIT_CODE=${PIPESTATUS[0]}
